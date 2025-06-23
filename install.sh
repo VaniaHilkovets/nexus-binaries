@@ -7,7 +7,7 @@ TMUX_SESSION="nexus"
 
 echo "📦 Устанавливаю зависимости..."
 apt update -y
-DEBIAN_FRONTEND=noninteractive apt install -y curl git tmux
+DEBIAN_FRONTEND=noninteractive apt install -y curl git tmux nano
 
 # 🔍 Проверка наличия tmux
 if ! command -v tmux >/dev/null; then
