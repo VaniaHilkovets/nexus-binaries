@@ -7,7 +7,13 @@ TMUX_SESSION="nexus"
 
 echo "📦 Устанавливаю зависимости..."
 apt update -y
-apt install -y curl git tmux
+DEBIAN_FRONTEND=noninteractive apt install -y curl git tmux
+
+# 🔍 Проверка, установлен ли tmux
+if ! command -v tmux >/dev/null; then
+  echo "❌ tmux не установлен. Установка провалена. Выход."
+  exit 1
+fi
 
 echo "📁 Клонирую бинарник..."
 rm -rf "$INSTALL_DIR"
@@ -26,12 +32,9 @@ fi
 echo "⚙️ Делаю бинарник исполняемым..."
 chmod +x "$INSTALL_DIR/nexus-network"
 
-echo "🚀 Запускаю ноду в tmux-сессии '$TMUX_SESSION'..."
-tmux has-session -t "$TMUX_SESSION" 2>/dev/null
+echo "🧹 Убиваю старую tmux-сессию (если есть)..."
+tmux kill-session -t "$TMUX_SESSION" 2>/dev/null || true
 
-if [ $? != 0 ]; then
-  tmux new-session -d -s "$TMUX_SESSION" "cd $INSTALL_DIR && ./nexus-network start --node-id $NODE_ID"
-  echo "✅ Нода запущена в tmux-сессии '$TMUX_SESSION'"
-else
-  echo "⚠️ tmux-сессия '$TMUX_SESSION' уже существует. Запуск отменён."
-fi
+echo "🚀 Запускаю ноду в новой tmux-сессии '$TMUX_SESSION'..."
+tmux new-session -d -s "$TMUX_SESSION" "cd $INSTALL_DIR && ./nexus-network start --node-id $NODE_ID"
+echo "✅ Нода запущена в tmux-сессии '$TMUX_SESSION'"
