@@ -15,11 +15,14 @@ if ! command -v tmux >/dev/null; then
   exit 1
 fi
 
-echo "📁 Клонирую бинарник..."
-rm -rf "$INSTALL_DIR"
-git clone "$REPO_URL" "$INSTALL_DIR"
+echo "📁 Клонирую или обновляю бинарник..."
+if [ -d "$INSTALL_DIR/.git" ]; then
+  cd "$INSTALL_DIR" && git pull
+else
+  git clone "$REPO_URL" "$INSTALL_DIR"
+fi
 
-echo "🔐 Получаю node-id..."
+# 🔐 Получение или ввод node-id
 if [ -f "$NODE_ID_FILE" ]; then
   NODE_ID=$(cat "$NODE_ID_FILE")
   echo "✅ Найден node-id: $NODE_ID"
