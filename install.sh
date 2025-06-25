@@ -32,6 +32,9 @@ else
   echo "✅ Сохранён в $NODE_ID_FILE"
 fi
 
+# 🔧 Запрос количества потоков
+read -rp "🔢 Введи количество потоков (--max-threads): " MAX_THREADS
+
 echo "⚙️ Делаю бинарник исполняемым..."
 chmod +x "$INSTALL_DIR/nexus-network"
 
@@ -39,7 +42,7 @@ echo "🧹 Убиваю старую tmux-сессию (если была)..."
 tmux kill-session -t "$TMUX_SESSION" 2>/dev/null || true
 
 echo "🚀 Запускаю ноду в новой tmux-сессии '$TMUX_SESSION'..."
-tmux new-session -d -s "$TMUX_SESSION" "cd $INSTALL_DIR && ./nexus-network start --node-id $NODE_ID"
+tmux new-session -d -s "$TMUX_SESSION" "cd $INSTALL_DIR && ./nexus-network start --node-id $NODE_ID --max-threads $MAX_THREADS"
 
 echo "✅ Всё готово. Открываю сессию..."
 sleep 1
